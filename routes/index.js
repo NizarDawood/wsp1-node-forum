@@ -2,13 +2,17 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', async function (req, res) {
-    res.send('Hello you!')
     res.render('index.njk', {
-    rows: rows,
-    title: 'Forum',
-});
+        rows: rows,
+        title: 'Forum',
+    });
 });
 module.exports = router;
+
+router.get('/', async function (req, res, next) {
+    const [rows] = await promisePool.query("SELECT * FROM ja15forum");
+    res.json({ rows });
+});
 
 const mysql = require('mysql2');
 const pool = mysql.createPool({
@@ -17,8 +21,8 @@ const pool = mysql.createPool({
     database: process.env.DB_DATABASE,
     password: process.env.DB_PASSWORD,
 });
-
 const promisePool = pool.promise();
+
 router.get('/', async function (req, res, next) {
     const [rows] = await promisePool.query("SELECT * FROM ja15forum");
     res.json({ rows });
