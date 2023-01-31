@@ -1,19 +1,5 @@
 const express = require('express');
 const router = express.Router();
-
-router.get('/', async function (req, res) {
-    res.render('index.njk', {
-        rows: rows,
-        title: 'Forum',
-    });
-});
-module.exports = router;
-
-router.get('/', async function (req, res, next) {
-    const [rows] = await promisePool.query("SELECT * FROM ja15forum");
-    res.json({ rows });
-});
-
 const mysql = require('mysql2');
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
@@ -23,7 +9,25 @@ const pool = mysql.createPool({
 });
 const promisePool = pool.promise();
 
+console.log(promisePool)
 router.get('/', async function (req, res, next) {
-    const [rows] = await promisePool.query("SELECT * FROM ja15forum");
-    res.json({ rows });
+    const [rows] = await promisePool.query("SELECT * FROM nd20forum");
+    //    res.json({ rows });
+
+    res.render('index.njk', {
+        rows: rows,
+        title: 'Forum',
+    });
 });
+router.post('/new', async function (req, res, next) {
+    const { author, title, content } = req.body;
+    const [rows] = await promisePool.query("INSERT INTO DITT_TABELL_NAMN (author, title, content) VALUES (?, ?, ?)", [author, title, content]);
+    res.redirect('/');
+});
+
+
+
+
+
+
+module.exports = router;
